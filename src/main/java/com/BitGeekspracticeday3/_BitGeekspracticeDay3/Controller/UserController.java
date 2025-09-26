@@ -41,23 +41,14 @@ public class UserController {
         return ResponseEntity.status(200).body(savedStudent);
     }
 
+
     @DeleteMapping("/student/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
-        try {
-
-            Optional<Studentmodel> studentOptional = studentRepository.findById(id);
-
-            if (studentOptional.isPresent()) {
-                studentRepository.delete(studentOptional.get());
-                return ResponseEntity.ok("Student with ID " + id + " deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Student with ID " + id + " not found");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error deleting student: " + e.getMessage());
+    public ResponseEntity<Void> DeleteStudent(@PathVariable Long id){
+        if(studentRepository.existsById(id)){
+            studentRepository.deleteById(id);
+            return ResponseEntity.ok().build();
         }
+        return ResponseEntity.notFound().build();
     }
 
 }
