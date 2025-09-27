@@ -3,13 +3,10 @@ package com.BitGeekspracticeday3._BitGeekspracticeDay3.Controller;
 import com.BitGeekspracticeday3._BitGeekspracticeDay3.models.Studentmodel;
 import com.BitGeekspracticeday3._BitGeekspracticeDay3.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -49,6 +46,19 @@ public class UserController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/student/{id}")
+    public ResponseEntity<Studentmodel> updateStudent(@PathVariable Long id, @RequestBody Studentmodel updatedStudent) {
+        return studentRepository.findById(id)
+                .map(existingStudent -> {
+                    existingStudent.setName(updatedStudent.getName());
+                    existingStudent.setEmail(updatedStudent.getEmail());
+                    // Version is handled automatically by JPA
+                    Studentmodel savedStudent = studentRepository.save(existingStudent);
+                    return ResponseEntity.ok(savedStudent);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
